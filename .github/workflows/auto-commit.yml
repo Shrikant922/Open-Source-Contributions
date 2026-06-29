@@ -1,0 +1,38 @@
+name: 🤖 Daily Auto Commits
+
+on:
+  schedule:
+    - cron: '30 18 * * *'   # Runs every day at 18:30 UTC = 12:00 AM IST (midnight)
+  workflow_dispatch:          # Also allows manual trigger from GitHub UI
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write         # Needed to push commits
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: ⚙️ Configure Git identity
+        run: |
+          git config user.name "Shrikant922"
+          git config user.email "shrikanttathe04@gmail.com"
+
+      - name: 💾 Run daily commit script
+        run: node daily.js
+
+      - name: 🚀 Push commits to GitHub
+        run: git push
